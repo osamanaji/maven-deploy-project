@@ -1,34 +1,40 @@
 pipeline {
-  agent any
-
+agent any
 stages {
-  stage('Checkout') {
+  stage('checkout') {
     steps {
-      checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-user', url: 'https://github.com/devopsdeepdive/maven-deploy-project.git']]])
+      checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'bf75e321-78e0-4cdd-b25f-ba02ffd21d00', url: 'https://github.com/osamanaji/maven-deploy-project.git']])
+    }
+  }
+stage('compile') {
+    steps {
+sh 'mvn compile'
     }
   }
   
-  stage('Validate') {
+  stage('package') {
     steps {
-      sh 'mvn validate'
+sh 'mvn package'
     }
   }
-  stage('Compile') {
+  
+   /*stage('Print-working-directory') {
     steps {
-      sh 'mvn compile'
+sh 'pwd'
     }
-  }
-  stage('Test-Skip') {
+  }*/
+  
+  
+  /*stage('TomcatDeply') {
     steps {
-      sh 'mvn install -Dmaven.test.skip=true'
-    }
-  }
-  stage('Package') {
-    steps {
-      sh 'mvn package'
-    }
-  }
-
+    sshagent(['tomcat_server']) {
+sh 'scp -o StrictHostKeyChecking=no /var/lib/jenkins/workspace/teavm-maven-webapp-pipeline/target/teavm-maven-webapp-1.0-RELEASE.war ubuntu@172.31.22.111:/var/lib/tomcat9/webapps/'
 }
+    }
+  }*/
+  
+ 
+}
+
 }
 
